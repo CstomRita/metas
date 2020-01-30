@@ -1,0 +1,10 @@
+{
+  "Anger": 20,
+  "Disgust": 30,
+  "Fear":40,
+  "Happiness":50,
+  "Like":60,
+  "Sadness":70,
+  "Surprise":80,
+  "none":100
+}
