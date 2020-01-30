@@ -137,6 +137,22 @@
 .login-notification .ant-notification-notice-close{
     color:#D3D7F7;
 }
+.ant-btn-red {
+    color: #fff;
+    background-color: #FF5A44;
+    border-color: #FF5A44;
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.12);
+    -webkit-box-shadow: 0 2px 0 rgba(0,0,0,0.045);
+    box-shadow: 0 2px 0 rgba(0,0,0,0.045);
+}
+.ant-btn-gray {
+    color: #fff;
+    background-color: rgba(142, 124, 119, 0.71);
+    border-color: rgba(142, 124, 119, 0.71);
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.12);
+    -webkit-box-shadow: 0 2px 0 rgba(0,0,0,0.045);
+    box-shadow: 0 2px 0 rgba(0,0,0,0.045);
+}
 /*更改谷歌浏览器input背景*/
 input:-webkit-autofill,
 input:-webkit-autofill:hover,

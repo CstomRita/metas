@@ -62,8 +62,8 @@ class HeaderBar extends React.Component {
     const menu = (
       <Menu className='menu'>
         <Menu.ItemGroup title={isAuthenticated()} className='menu-group'>
-          <Menu.Item>个人信息</Menu.Item>
-          <Menu.Item>个人关注</Menu.Item>
+          <Menu.Item><Link to='/home/general/icon'>个人信息</Link></Menu.Item>
+          <Menu.Item><Link to='/home/general/icon'>个人关注</Link></Menu.Item>
           <Menu.Item><span onClick={this.logout}>退出登录</span></Menu.Item>
         </Menu.ItemGroup>
       </Menu>
