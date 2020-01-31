@@ -50,7 +50,7 @@ class SearchspiderSpider(scrapy.Spider):
         if not os.path.exists(self.path):
             os.mkdir(self.path)
         self.num = int(num)
-        self.topiccount = 1
+        self.topiccount = 0
 
         form_data = {
             'containerid': '106003type=25&t=3&disable_hot=1&filter_type=topicband',
@@ -89,12 +89,17 @@ class SearchspiderSpider(scrapy.Spider):
                         item['topicname'] = topicname
                         item['readcount'] = readcount
                         item['topicdesc'] = topicdesc
-                        self.write(str(self.topiccount) + "\t" + topicname + "\t"+ topicdesc + "\t"+ readcount + "\t" + cover_url)
                         self.topiccount += 1
+                        self.write(str(self.topiccount) + "\t" + topicname + "\t"+ topicdesc + "\t"+ readcount + "\t" + cover_url)
+                        counts = str(readcount).strip().split(' ')
+                        self.write_to_topic(str(counts[1][-2:]+counts[1][0:-2])
+                                            + "\t"
+                                            + str(counts[0][-2:]+counts[0][0:-2])
+                                            + "\t" + cover_url + "\t" + topicdesc,topicname)
+
                         yield item
-                    except BaseException:
-                        print("可能是最后一个 更多的卡片" + str(N))
-                        print(it)
+                    except BaseException as e:
+                        print(e)
 
     def parse(self, response):
         # 处理第一页
@@ -119,6 +124,15 @@ class SearchspiderSpider(scrapy.Spider):
         需要清洗文本
         '''
         with open(self.path + '/topic.txt','a') as f:
+            f.write((text))  # 写入
+            f.write('\n')  # 有时放在循环里面需要自动转行，不然会覆盖上一条数据
+
+    # 把爬到的新话题再放一份到topic中
+    def write_to_topic(self,text,topicName):
+        topicPath = "topic/" + str(topicName[1:-1])
+        if not os.path.exists(topicPath):
+            os.mkdir(topicPath)
+        with open(topicPath + '/'+str(topicName[1:-1])+'.txt', 'w+') as f:
             f.write((text))  # 写入
             f.write('\n')  # 有时放在循环里面需要自动转行，不然会覆盖上一条数据
 

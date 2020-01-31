@@ -76,7 +76,8 @@ class SearchspiderSpider(scrapy.Spider):
             topic['midtext'] = topic_desc
             img_url = js['data']['cardlistInfo']['cardlist_head_cards'][0]['head_data']['portrait_url']
             topic['img'] = img_url
-            self.writeTopic(counts[0] + "\t" + counts[2] + "\t" + img_url)
+            desc = js['data']['cardlistInfo']['desc']
+            self.writeTopic(counts[0] + "\t" + counts[2] + "\t" + img_url + "\t" + desc)
 
         cardN = len(js['data']['cards'])
         for i in range(N, cardN):
@@ -127,6 +128,9 @@ class SearchspiderSpider(scrapy.Spider):
             f.write('\n')  # 有时放在循环里面需要自动转行，不然会覆盖上一条数据
 
     def writeTopic(self, text):
+        # 如果存在，不重新写了
+        if(os.path.exists('topic/' + self.topic + '/' + self.topic + '.txt')):
+            return
         """将爬取的信息写入csv文件"""
         with open('topic/' + self.topic + '/' + self.topic + '.txt','w+') as f:
             f.write(text)  # 写入
