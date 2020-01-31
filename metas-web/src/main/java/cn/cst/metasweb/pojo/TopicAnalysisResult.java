@@ -16,6 +16,25 @@ public class TopicAnalysisResult {
     String discussCount;
     String coverUrl;
     String topicDesc;
+    String time;
+
+    public TopicAnalysisResult(String topicName, String readCount, String discussCount, String coverUrl, String topicDesc, String time, JSONObject analysisResult) {
+        this.topicName = topicName;
+        this.readCount = readCount;
+        this.discussCount = discussCount;
+        this.coverUrl = coverUrl;
+        this.topicDesc = topicDesc;
+        this.time = time;
+        this.analysisResult = analysisResult;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
 
     JSONObject analysisResult;
 
@@ -35,6 +54,15 @@ public class TopicAnalysisResult {
         this.coverUrl = topic.getCoverUrl();
         this.topicDesc = topic.getTopicDesc();
         this.analysisResult = analysisResult;
+    }
+    public TopicAnalysisResult(Topic topic,JSONObject analysisResult,String time){
+        this.topicName = topic.getTopicName();
+        this.readCount = topic.getReadCount();
+        this.discussCount = topic.getDiscussCount();
+        this.coverUrl = topic.getCoverUrl();
+        this.topicDesc = topic.getTopicDesc();
+        this.analysisResult = analysisResult;
+        this.time = time;
     }
 
     public String getTopicDesc() {

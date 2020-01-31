@@ -20,6 +20,8 @@ import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 
 /**
@@ -135,6 +137,11 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
+    /**
+     * @Author: ChangSiteng
+     * @Description: 在已有结果.json中返回大于concernTime的，不做额外cmd运行
+     * 注意：返回值就是排好序的！！！！！！！
+     */
     public ArrayList<TopicAnalysisResult> getTopicTrend(String topic, String concernTime) {
         ArrayList<TopicAnalysisResult> results = new ArrayList<>();
         Topic topicInfo = getTopicInfo(topic);
@@ -147,7 +154,7 @@ public class TopicServiceImpl implements TopicService {
                 if (df.parse(concernTime).compareTo(df.parse(fileTime)) <= 0) {
                     JSONObject analysisResult = JsonUtils.readJson(file.getPath());
                     TopicAnalysisResult result = new TopicAnalysisResult(
-                           topicInfo, analysisResult
+                           topicInfo, analysisResult,fileTime
                     );
                     results.add(result);
                 }
@@ -155,6 +162,18 @@ public class TopicServiceImpl implements TopicService {
                 logger.warn(e.toString());
             }
         }
+        // 重新定义集合的比较算法，让fileTime小的在前面
+        Collections.sort(results, new Comparator<TopicAnalysisResult>() {
+            @Override
+            public int compare(TopicAnalysisResult o1, TopicAnalysisResult o2) {
+                try {
+                    return df.parse(o1.getTime()).compareTo(df.parse(o2.getTime()));
+                } catch (ParseException e) {
+                    logger.warn(e.toString());
+                }
+                return 0;
+            }
+        });
         return results;
     }
 
