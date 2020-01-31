@@ -44,6 +44,18 @@ self.url_temp = self.url_base + urllib.parse.urlencode(form_data) +'&page='
 
 运行结果：存储至topic下txt中
 
+### run_hottopic.py
+
+爬取热门话题脚本
+
+### run_weibo.py
+
+Step1.  `scrapy crawl mblogSpider -a topic=小黄车` 
+
+Step2. 连接GPU服务器进行情感分析
+
+Step3. 将结果复制到topic/小黄车/result 文件夹下
+
 ### run.py
 
 简单定时运行更新
