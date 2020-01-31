@@ -91,34 +91,40 @@ export default class About extends React.Component{
                     <span><Button variant="outlined" disabled>讨论量{rowData.discussCount}</Button>&nbsp;&nbsp;&nbsp;&nbsp; </span>
                     <input type="button"  class="ant-btn-red" id = {rowData.topicName} value=" 关注话题 " onClick={()=>this.concern(rowData.topicName)}/>
             </div>
+                <div className="desc">
+                    <text style={{
+                        fontSize: 15,
+                        color: "gray"
+                    }}>{rowData.topicDesc == '' ? '暂无导语' : '导语：' + rowData.topicDesc}</text>
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+
+                </div>
             </div>
         );
     };
 
     getOption = (listData)=>{
-        var count = parseInt(listData.analysisResult.Anger.toString())
-            + parseInt(listData.analysisResult.Fear.toString() )
-            + parseInt(listData.analysisResult.Happiness )
-            + parseInt(listData.analysisResult.Like )
-            + parseInt(listData.analysisResult.Disgust )
-            + parseInt(listData.analysisResult.Surprise )
-            + parseInt(listData.analysisResult.none )
-            + parseInt(listData.analysisResult.Sandeness);
-        let option = {
+        var item = listData
+        let total = (((((item.analysisResult.Anger + item.analysisResult.Fear ) + item.analysisResult.Happiness) + item.analysisResult.Like) + item.analysisResult.Disgust) + item.analysisResult.Surprise)
+        total = total  + item.analysisResult.none
+        total = (total + item.analysisResult.Sadness)
+        console.log(total);
+            let option = {
             title: {
-                text: listData.topicName+'情感分布图\n\n\n\n\n',
+                text: '#'+listData.topicName+'# 情感分布图\n\n\n\n\n',
                 x: 'center',
                 y: 'top'
             },
             tooltip : {
                 trigger: 'item',
-                formatter: "情感为{b}的{a} <br/> {c} ({d}%)"
+                formatter: "情感为{b}的{a}:{c},<br/>占总体"+total+"人"+"的{d}%"
             },
             legend: {
                 orient: 'vertical',
                 // top: 20,
                 right: 5,
-                data: ['Anger','Fear','Happiness','Like','Disgust','Surprise','none','Sandeness']
+                data: ['Anger','Fear','Happiness','Like','Disgust','Surprise','none','Sadness']
             },
             series : [
                 {
@@ -133,7 +139,7 @@ export default class About extends React.Component{
                         {value:listData.analysisResult.Disgust, name:'Disgust'},
                         {value:listData.analysisResult.Surprise, name:'Surprise'},
                         {value:listData.analysisResult.none, name:'none'},
-                        {value:listData.analysisResult.Sandeness, name:'Sandeness'}
+                        {value:listData.analysisResult.Sadness, name:'Sadness'}
                     ],
                 }
             ]
