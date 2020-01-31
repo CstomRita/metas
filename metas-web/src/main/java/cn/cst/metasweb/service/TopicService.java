@@ -20,4 +20,5 @@ public interface TopicService {
     Boolean concernTopic(String topic);
     Boolean cancelConcernTopic(String topic);
     ArrayList<TopicAnalysisResult> getTopicTrend(String topic,String concernTime);
+    ArrayList<Topic> getConcernTopicInfo(ArrayList<String> concernTopicList);
 }

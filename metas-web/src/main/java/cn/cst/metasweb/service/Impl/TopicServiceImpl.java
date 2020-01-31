@@ -32,7 +32,7 @@ import java.util.Date;
 @Component
 public class TopicServiceImpl implements TopicService {
 
-    private final String dataPath = "/Users/changsiteng/PycharmProjects/weiboSA";
+    private final String dataPath = "/Users/changsiteng/PycharmProjects/WeMediaSentimentAnalysis/metas/metas-spider";
     private Logger logger = LoggerFactory.getLogger(TopicServiceImpl.class);
     private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH");
 
@@ -100,24 +100,8 @@ public class TopicServiceImpl implements TopicService {
             ShellUtils.runShell(cmd);
         }
         JSONObject analysisResult = JsonUtils.readJson(resultPath);
-        String topicPath = dataPath + "/topic/" + topic + "/" + topic +".txt";
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(new File(topicPath)));
-            String s = null;
-            while ((s = br.readLine()) != null) {
-                String[] mess = s.trim().split("\\t");
-                String readCount = mess[0].substring(2);
-                String discussCount = mess[1].substring(2);
-                String coverUrl = mess[2].trim();
-                TopicAnalysisResult result = new TopicAnalysisResult(
-                        topic,readCount,discussCount,coverUrl,analysisResult
-                );
-                return result;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        Topic topicInfo = getTopicInfo(topic);
+        return new TopicAnalysisResult(topicInfo,analysisResult);
     }
 
     @Autowired
@@ -153,22 +137,7 @@ public class TopicServiceImpl implements TopicService {
     @Override
     public ArrayList<TopicAnalysisResult> getTopicTrend(String topic, String concernTime) {
         ArrayList<TopicAnalysisResult> results = new ArrayList<>();
-        String topicPath = dataPath + "/topic/" + topic + "/" + topic +".txt";
-        String readCount = "";
-        String discussCount = "";
-        String coverUrl = "";
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(new File(topicPath)));
-            String s = null;
-            while ((s = br.readLine()) != null) {
-                String[] mess = s.trim().split("\\t");
-                 readCount = mess[0].substring(2);
-                 discussCount = mess[1].substring(2);
-                 coverUrl = mess[2].trim();
-            }
-        }catch (Exception e) {
-            logger.warn(e.toString());
-        }
+        Topic topicInfo = getTopicInfo(topic);
 
         String folerPath = dataPath + "/topic/" + topic + "/resultcount";
         File[] files = new File(folerPath).listFiles();
@@ -178,7 +147,7 @@ public class TopicServiceImpl implements TopicService {
                 if (df.parse(concernTime).compareTo(df.parse(fileTime)) <= 0) {
                     JSONObject analysisResult = JsonUtils.readJson(file.getPath());
                     TopicAnalysisResult result = new TopicAnalysisResult(
-                            topic,readCount,discussCount,coverUrl,analysisResult
+                           topicInfo, analysisResult
                     );
                     results.add(result);
                 }
@@ -189,9 +158,63 @@ public class TopicServiceImpl implements TopicService {
         return results;
     }
 
+    /**
+     * @Author: ChangSiteng
+     * @Description: 已有文件的情况下，获取Topic信息
+     */
+    private Topic getTopicInfo(String topicName) {
+        String topicPath = dataPath + "/topic/" + topicName  + "/" + topicName +".txt";
+        String readCount = "";
+        String discussCount = "";
+        String coverUrl = "";
+        String topicDesc = "";
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(new File(topicPath)));
+            String s = null;
+            while ((s = br.readLine()) != null) {
+                String[] mess = s.trim().split("\\t");
+                System.out.println(mess.length);
+                readCount = mess[0].substring(2);
+                discussCount = mess[1].substring(2);
+                coverUrl = mess[2].trim();
+                if (mess.length > 3) {
+                    logger.info(topicName + "有描述desc");
+                    topicDesc = mess[3];
+                }else{
+                    logger.info(topicName + "无描述desc");
+                }
+            }
+        }catch (Exception e) {
+            logger.warn(e.toString());
+        }
+        return new Topic(topicName,topicDesc,discussCount,readCount,coverUrl);
+    }
+
+    /**
+     * @Author: ChangSiteng
+     * @Description: 给定话题名称 获取其简介、讨论人数等等....
+     * @param concernTopicList:
+     * @return: java.util.ArrayList<cn.cst.metasweb.pojo.Topic>
+     */
+    @Override
+    public ArrayList<Topic> getConcernTopicInfo(ArrayList<String> concernTopicList) {
+        ArrayList<Topic> list = new ArrayList<>();
+        for (String topicName:concernTopicList) {
+            if (!new File(dataPath + "/topic/" + topicName  + "/" + topicName +".txt").exists()) {
+                String cmd = "cd "+ dataPath + " && scrapy crawl mblogSpider -a topic="+topicName;
+                logger.info("运行"+cmd);
+                ShellUtils.runShell(cmd);
+            }
+            list.add(getTopicInfo(topicName.trim()));
+        }
+        return list;
+    }
+
     @Test
     public void test(){
-        getTopicTrend("小黄车","2020-01-10-08");
+//        getTopicTrend("小黄车","2020-01-10-08");
+        getTopicInfo("小黄车");
     }
+
 
     }
