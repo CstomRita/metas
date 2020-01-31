@@ -72,7 +72,14 @@
      margin-bottom: 0;
  }
 
-
+#login-page .footer_all{
+    position: absolute;
+    top: 30px;
+    left: 20px;
+    width: 500px;
+    color: #FF5A44;
+    font-size: 35px;
+}
 #login-page .footer{
     position: absolute;
     top: 20px;
